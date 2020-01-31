@@ -1,10 +1,10 @@
 # Author: Marko Njegomir
-from cProfile import label
 
-import numpy as np, random, operator, pandas as pd, matplotlib.pyplot as plt
-from src.model.Grad import Grad
-from src.model.Fitness import Fitness
+import matplotlib.pyplot as plt
+import random
+
 from src import ga
+from src.model.Grad import Grad
 
 
 def main():

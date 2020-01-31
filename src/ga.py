@@ -1,49 +1,56 @@
 # Author: Marko Njegomir
 
-import numpy as np, random, operator, pandas as pd, matplotlib.pyplot as plt
-from src.model.Fitness import Fitness
-from src.model.Grad import Grad
 from math import floor
 
-def napraviPutanju(listaGradova):
-    return random.sample(listaGradova, len(listaGradova))
+import matplotlib.pyplot as plt
+import numpy as np
+import operator
+import pandas as pd
+import random
+
+from src.model.Fitness import Fitness
+from src.model.Grad import Grad
 
 
-def inicijalnaPopulacija(velicinaPopulacije, listaGradova):
+def napraviPutanju(lista_gradova):
+    return random.sample(lista_gradova, len(lista_gradova))
+
+
+def inicijalnaPopulacija(velicina_populacije, lista_gradova):
     pop = []
-    for i in range(velicinaPopulacije):
-        pop.append(napraviPutanju(listaGradova))
+    for i in range(velicina_populacije):
+        pop.append(napraviPutanju(lista_gradova))
     return pop
 
 
 def rankPutanja(pop):
-    fitnessRezultati = {}
+    fitness_rezultati = {}
     for i in range(len(pop)):
-        fitnessRezultati[i] = Fitness(pop[i]).fitnessPutanje()
-    return sorted(fitnessRezultati.items(), key=operator.itemgetter(1), reverse=True)
+        fitness_rezultati[i] = Fitness(pop[i]).fitnessPutanje()
+    return sorted(fitness_rezultati.items(), key=operator.itemgetter(1), reverse=True)
 
 
-def selection(popRangirana, brojElitnih):
-    rezultatSelekcije = []
-    df = pd.DataFrame(np.array(popRangirana), columns=["Index", "Fitness"])
+def selection(pop_rangirana, broj_elitnih):
+    rezultat_selekcije = []
+    df = pd.DataFrame(np.array(pop_rangirana), columns=["Index", "Fitness"])
     df['cumulative_sum'] = df.Fitness.cumsum()
     df['cumulative_perc'] = 100 * df.cumulative_sum / df.Fitness.sum()
 
-    for i in range(0, brojElitnih):
-        rezultatSelekcije.append(popRangirana[i][0])
-    for i in range(len(popRangirana) - brojElitnih):
+    for i in range(0, broj_elitnih):
+        rezultat_selekcije.append(pop_rangirana[i][0])
+    for i in range(len(pop_rangirana) - broj_elitnih):
         odabrani = 100 * random.random()
-        for i in range(len(popRangirana)):
+        for i in range(len(pop_rangirana)):
             if odabrani <= df.iat[i, 3]:
-                rezultatSelekcije.append(popRangirana[i][0])
+                rezultat_selekcije.append(pop_rangirana[i][0])
                 break
-    return rezultatSelekcije
+    return rezultat_selekcije
 
 
-def odabirZaUkrstanje(pop, rezultatSelekcije):
+def odabirZaUkrstanje(pop, rezultat_selekcije):
     odabrani = []
-    for i in range(len(rezultatSelekcije)):
-        odabrani.append(pop[rezultatSelekcije[i]])
+    for i in range(len(rezultat_selekcije)):
+        odabrani.append(pop[rezultat_selekcije[i]])
     return odabrani
 
 
@@ -80,7 +87,7 @@ def parenjePopulacije(odabrani_za_parenje, broj_elitnih):
 
 def mutate(putanja, sansa_mutacije):
     for zamenjen in range(len(putanja)):
-        if (random.random() < sansa_mutacije):
+        if random.random() < sansa_mutacije:
             zameni_sa = int(random.random() * len(putanja))
 
             putanja[zamenjen], putanja[zameni_sa] = putanja[zameni_sa], putanja[zamenjen]
@@ -95,10 +102,10 @@ def mutirajPopulaciju(pop, sansa_mutacije):
     return mutirana_pop
 
 
-def sledecaGeneracija(trenutnaGen, broj_elitnih, sansa_mutacije):
-    rangirana_pop = rankPutanja(trenutnaGen)
+def sledecaGeneracija(trenutna_gen, broj_elitnih, sansa_mutacije):
+    rangirana_pop = rankPutanja(trenutna_gen)
     rezultat_selekcije = selection(rangirana_pop, broj_elitnih)
-    odabrani_za_ukrstanje = odabirZaUkrstanje(trenutnaGen, rezultat_selekcije)
+    odabrani_za_ukrstanje = odabirZaUkrstanje(trenutna_gen, rezultat_selekcije)
     deca = parenjePopulacije(odabrani_za_ukrstanje, broj_elitnih)
     sledeca_gen = mutirajPopulaciju(deca, sansa_mutacije)
     return sledeca_gen
@@ -127,12 +134,12 @@ def prikaziMapu(lista_gradova, iteracija=None):
 
 def genetskiAlgoritam(populacija, velicina_populacije, broj_elitnih, sansa_mutacije, generacije):
     pop = inicijalnaPopulacija(velicina_populacije, populacija)
-    print("Inicijalna udaljenost: " + str(1 / rankPutanja(pop)[0][1]))
+    print("Inicijalna udaljenost: " + str(1 / rankPutanja(pop)[0]))
     interval = floor(generacije * 0.05)  # %generacija koji se prikazuje
-    treshold = 50  # prikazi prvih 100 generacija gde ima mnogo promena a onda idi po intervalima
+    treshold = 50  # prikazi prvih n generacija gde ima mnogo promena a onda idi po intervalima
     for i in range(generacije):
         pop = sledecaGeneracija(pop, broj_elitnih, sansa_mutacije)
-        indeks_najbolje_putanje = rankPutanja(pop)[0][0]
+        indeks_najbolje_putanje = rankPutanja(pop)[0]
         najbolja_putanja = pop[indeks_najbolje_putanje]
         if i < treshold:
             print("ITERACIJA " + str(i))
@@ -145,9 +152,9 @@ def genetskiAlgoritam(populacija, velicina_populacije, broj_elitnih, sansa_mutac
         elif i % (interval * 2) == 0:
             print("ITERACIJA " + str(i))
             prikaziMapu(najbolja_putanja, i)
-    konacna_udaljenost = 1 / rankPutanja(pop)[0][1]
+    konacna_udaljenost = 1 / rankPutanja(pop)[0]
     print("Konacna udaljenost: " + str(konacna_udaljenost))
-    indeks_najbolje_putanje = rankPutanja(pop)[0][0]
+    indeks_najbolje_putanje = rankPutanja(pop)[0]
     najbolja_putanja = pop[indeks_najbolje_putanje]
     prikaziMapu(najbolja_putanja, str(generacije) + "\nDuzina putanje: " + str(konacna_udaljenost))
     # return najbolja_putanja

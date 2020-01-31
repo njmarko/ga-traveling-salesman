@@ -8,9 +8,9 @@ class Grad:
         self.y = y
 
     def udaljenost(self, grad):
-        xUdaljenost = abs(self.x - grad.x)
-        yUdaljenost = abs(self.y - grad.y)
-        return np.sqrt((xUdaljenost ** 2) + (yUdaljenost ** 2))
+        x_udaljenost = abs(self.x - grad.x)
+        y_udaljenost = abs(self.y - grad.y)
+        return np.sqrt((x_udaljenost ** 2) + (y_udaljenost ** 2))
 
     def __repr__(self):
         return "(" + str(self.x) + "," + str(self.y) + ")"

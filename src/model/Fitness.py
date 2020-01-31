@@ -1,6 +1,4 @@
 # Author: Marko Njegomir sw-38-2018
-import numpy as np
-from src.model import Grad
 
 
 class Fitness:
