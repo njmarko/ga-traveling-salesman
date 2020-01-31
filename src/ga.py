@@ -134,12 +134,12 @@ def prikaziMapu(lista_gradova, iteracija=None):
 
 def genetskiAlgoritam(populacija, velicina_populacije, broj_elitnih, sansa_mutacije, generacije):
     pop = inicijalnaPopulacija(velicina_populacije, populacija)
-    print("Inicijalna udaljenost: " + str(1 / rankPutanja(pop)[0]))
+    print("Inicijalna udaljenost: " + str(1 / rankPutanja(pop)[0][1]))
     interval = floor(generacije * 0.05)  # %generacija koji se prikazuje
     treshold = 50  # prikazi prvih n generacija gde ima mnogo promena a onda idi po intervalima
     for i in range(generacije):
         pop = sledecaGeneracija(pop, broj_elitnih, sansa_mutacije)
-        indeks_najbolje_putanje = rankPutanja(pop)[0]
+        indeks_najbolje_putanje = rankPutanja(pop)[0][0]
         najbolja_putanja = pop[indeks_najbolje_putanje]
         if i < treshold:
             print("ITERACIJA " + str(i))
@@ -152,9 +152,9 @@ def genetskiAlgoritam(populacija, velicina_populacije, broj_elitnih, sansa_mutac
         elif i % (interval * 2) == 0:
             print("ITERACIJA " + str(i))
             prikaziMapu(najbolja_putanja, i)
-    konacna_udaljenost = 1 / rankPutanja(pop)[0]
+    konacna_udaljenost = 1 / rankPutanja(pop)[0][1]
     print("Konacna udaljenost: " + str(konacna_udaljenost))
-    indeks_najbolje_putanje = rankPutanja(pop)[0]
+    indeks_najbolje_putanje = rankPutanja(pop)[0][0]
     najbolja_putanja = pop[indeks_najbolje_putanje]
     prikaziMapu(najbolja_putanja, str(generacije) + "\nDuzina putanje: " + str(konacna_udaljenost))
     # return najbolja_putanja
